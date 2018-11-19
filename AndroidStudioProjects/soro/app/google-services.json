@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "86156289396",
+    "firebase_url": "https://soro-7b833.firebaseio.com",
+    "project_id": "soro-7b833",
+    "storage_bucket": "soro-7b833.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:86156289396:android:995374151c7ca313",
+        "android_client_info": {
+          "package_name": "com.soro.diarra.soro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "86156289396-vlodevnhlpp9sl8ib0eetq8kjlbv5p4f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.soro.diarra.soro",
+            "certificate_hash": "d9280db14ddf7355beb2f91da27c5b6775c07e01"
+          }
+        },
+        {
+          "client_id": "86156289396-qjhus0qml05sbr29vde3gg6voudi3mvk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCL9auskY1HAWwjuC12ROxQhVm0mr4mEzs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "86156289396-qjhus0qml05sbr29vde3gg6voudi3mvk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

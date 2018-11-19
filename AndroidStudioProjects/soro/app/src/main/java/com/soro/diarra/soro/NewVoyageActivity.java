@@ -1,5 +1,7 @@
 package com.soro.diarra.soro;
 
+import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -7,6 +9,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class NewVoyageActivity extends AppCompatActivity {
     private EditText edittitreView;
@@ -14,11 +25,21 @@ public class NewVoyageActivity extends AppCompatActivity {
     private Button addNewVoyageBtn;
     private ProgressBar newVoyageProgressBar;
 
+    private String user_id;
+
+    private FirebaseFirestore firebaseFirestore;
+    private FirebaseAuth mAuth;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_voyage);
+
+        firebaseFirestore = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        user_id = mAuth.getCurrentUser().getUid();
+
 
         newVoyageProgressBar = (ProgressBar)findViewById(R.id.new_voyage_progress);
 
@@ -48,7 +69,7 @@ public class NewVoyageActivity extends AppCompatActivity {
 
         String titre = edittitreView.getText().toString();
         String date = editdateView.getText().toString();
-        if(!TextUtils.isEmpty(titre)){
+        if(TextUtils.isEmpty(titre)){
             edittitreView.setError("Titre est vide");
             focusView = edittitreView;
             cancel = true;
@@ -57,7 +78,7 @@ public class NewVoyageActivity extends AppCompatActivity {
             focusView = edittitreView;
             cancel = true;
         }
-        if(!TextUtils.isEmpty(date)){
+        if(TextUtils.isEmpty(date)){
             editdateView.setError(" la date manquante");
             focusView = editdateView;
             cancel = true;
@@ -68,11 +89,24 @@ public class NewVoyageActivity extends AppCompatActivity {
         }else {
             newVoyageProgressBar.setVisibility(View.VISIBLE);
 
-            //todo
-            /**
-             * firebase adding voyage;
-             * if success add lieux
-             */
+            //store voyage
+            Map<String,Object> voyageMap = new HashMap();
+            voyageMap.put("titre",titre);
+            voyageMap.put("date",date);
+            firebaseFirestore.collection("Voyages").document(user_id)
+                    .set(voyageMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()){
+                        Intent intent = new Intent(NewVoyageActivity.this, NewLocationActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }else {
+                        String error = task.getException().getMessage();
+                        Toast.makeText(getApplicationContext(),error,Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
         }
     }
 
