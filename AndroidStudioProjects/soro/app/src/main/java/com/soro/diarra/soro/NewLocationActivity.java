@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -47,6 +48,8 @@ public class NewLocationActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     ExifInterface exifInterface;
 
+    String voyageId;
+
     private Bitmap compressedImageFile;
     private Uri postImageUri = null;
     private String user_id = null;
@@ -62,8 +65,9 @@ public class NewLocationActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         user_id = mAuth.getCurrentUser().getUid();
+        voyageId = getIntent().getStringExtra("voyage_id");
 
-        Log.i("useridddddd",user_id);
+        Log.i("voyageidddddd",voyageId);
         imgLocation = (ImageView) findViewById(R.id.new_lieu_img);
         editNamneLocation = (EditText) findViewById(R.id.new_lieu_name);
         newLieuBtn = (Button) findViewById(R.id.new_lieu_btn);
@@ -86,13 +90,16 @@ public class NewLocationActivity extends AppCompatActivity {
                 final String nomlieu = editNamneLocation.getText().toString();
                 if(!TextUtils.isEmpty(nomlieu)&& postImageUri != null){
                     newLieuBtn.setEnabled(false);
-                    String urlstring = postImageUri.toString();
+                    String urlstring = postImageUri.getPath();
+
                     try {
                         exifInterface = new ExifInterface(urlstring);
                         exifInterface.getLatLong(position);
+                        Toast.makeText(getApplicationContext(),"post1 "+ position[0]+",post2 "+position[1],Toast.LENGTH_LONG).show();
 
                     } catch (IOException e) {
                         e.printStackTrace();
+                        
                     }
 
                     //store file
@@ -176,10 +183,10 @@ public class NewLocationActivity extends AppCompatActivity {
                                         postMap.put("image_url", downloadUri_post);
                                         postMap.put("image_thumb", downloadthumbUri);
                                         postMap.put("name", nomlieu);
-                                        postMap.put("position",position);
+                                        //postMap.put("position",position);
 
                                         //todo get voyage
-                                        firebaseFirestore.collection("Voyages/"+user_id+"/lieux").add(postMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                        firebaseFirestore.collection("Voyages/"+voyageId+"/lieux").add(postMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                                             @Override
                                             public void onComplete(@NonNull Task<DocumentReference> task) {
                                                 if(task.isSuccessful()){

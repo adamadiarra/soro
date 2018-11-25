@@ -7,4 +7,5 @@
     <color name="redcolor">#ff1a0a</color>
     <color name="like_btn_gray">#747474</color>
     <color name="like_btn_accent">#F44336</color>
+    <color name="white_color">#FFFFFF</color>
 </resources>

@@ -1,26 +1,25 @@
 package com.soro.diarra.soro;
 
-import java.util.Date;
-import java.util.List;
 
-public class Voyage {
+public class Voyage extends VoyageId  {
 
     private String titre;
-    private Date date;
+
+    private String user_id;
+    private String date;
 
 
 
 
-
-    private List<Lieu> lieux;
 
     public Voyage() {
     }
 
-    public Voyage(String titre, Date date, List<Lieu> lieux) {
+    public Voyage(String titre, String date,String user_id) {
         this.titre = titre;
+        this.user_id = user_id;
         this.date = date;
-        this.lieux = lieux;
+
     }
 
     public String getTitre() {
@@ -31,31 +30,19 @@ public class Voyage {
         this.titre = titre;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
-
-    public List<Lieu> getLieux() {
-        return lieux;
+    public String getUser_id() {
+        return user_id;
     }
 
-    public void setLieux(List<Lieu> lieux) {
-        this.lieux = lieux;
-    }
-
-    public void addLieu(Lieu lieu) {
-        this.lieux.add(lieu);
-    }
-
-    public String getImage() {
-        if(lieux!=null){
-            return lieux.get(0).getImage();
-        }
-        return "";
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
     }
 
 }

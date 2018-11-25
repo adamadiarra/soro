@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -93,18 +94,19 @@ public class NewVoyageActivity extends AppCompatActivity {
             Map<String,Object> voyageMap = new HashMap();
             voyageMap.put("titre",titre);
             voyageMap.put("date",date);
-            firebaseFirestore.collection("Voyages").document(user_id)
-                    .set(voyageMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+            voyageMap.put("user_id",user_id);
+            firebaseFirestore.collection("Voyages").add(voyageMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                 @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()){
-                        Intent intent = new Intent(NewVoyageActivity.this, NewLocationActivity.class);
+                public void onComplete(@NonNull Task<DocumentReference> task) {
+                    if(task.isSuccessful()){
+                        Toast.makeText(getApplicationContext(),"voyage added",Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(NewVoyageActivity.this,MainActivity.class);
                         startActivity(intent);
                         finish();
                     }else {
-                        String error = task.getException().getMessage();
-                        Toast.makeText(getApplicationContext(),error,Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(),task.getException().getMessage(),Toast.LENGTH_LONG).show();
                     }
+                    newVoyageProgressBar.setVisibility(View.INVISIBLE);
                 }
             });
         }

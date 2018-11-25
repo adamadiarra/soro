@@ -16,5 +16,7 @@
     <string name="action_setting">Account Setting</string>
     <string name="action_logout">Logout</string>
     <string name="setup_hint_name">Your name</string>
+    <string name="menu_add_lieu">Ajouter un lieu</string>
+    <string name="v_mnu_supp">suppromer</string>
 
 </resources>

@@ -18,9 +18,17 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private Toolbar toolbar;
+    FirebaseFirestore firebaseFirestore;
 
 
     private RecyclerView listeView;
@@ -42,9 +51,11 @@ public class MainActivity extends AppCompatActivity {
 
         toolbar = (Toolbar)findViewById(R.id.main_tollbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Mon blog");
+        getSupportActionBar().setTitle("Mes voyages");
 
         mAuth = FirebaseAuth.getInstance();
+
+        firebaseFirestore = FirebaseFirestore.getInstance();
 
         list_voyages = new ArrayList<>();
         voyageReclycleAdapter = new VoyageReclycleAdapter(list_voyages);
@@ -66,10 +77,32 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        //todo
-        /**
-         * get voyages from firebase and update;
-         */
+        Query firstQuery = firebaseFirestore.collection("Voyages").orderBy("titre",Query.Direction.DESCENDING);
+
+        firstQuery.addSnapshotListener(this, new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot documentSnapshots, @Nullable FirebaseFirestoreException e) {
+
+                if (!documentSnapshots.isEmpty()) {
+                    for (DocumentChange doc:documentSnapshots.getDocumentChanges()){
+                        if (doc.getType() == DocumentChange.Type.ADDED){
+
+                            user_id = mAuth.getCurrentUser().getUid();
+                            String voyageId = doc.getDocument().getId();
+                            Voyage voyage = doc.getDocument().toObject(Voyage.class).withId(voyageId);
+                            Toast.makeText(getApplicationContext(),voyage.getUser_id()+" = "+user_id,Toast.LENGTH_LONG).show();
+                            if(user_id.equals(voyage.getUser_id())){
+                                list_voyages.add(voyage);
+                                voyageReclycleAdapter.notifyDataSetChanged();
+                            }
+
+
+
+                        }
+                    }
+                }
+            }
+        });
     }
 
 
@@ -81,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
             sendToLogin();
         }else {
 
-            user_id = mAuth.getUid();
+            //user_id = mAuth.getUid();
             /**
             firebaseFirestore.collection("Users").document(user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
