@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
                             user_id = mAuth.getCurrentUser().getUid();
                             String voyageId = doc.getDocument().getId();
                             Voyage voyage = doc.getDocument().toObject(Voyage.class).withId(voyageId);
-                            Toast.makeText(getApplicationContext(),voyage.getUser_id()+" = "+user_id,Toast.LENGTH_LONG).show();
+                            //Toast.makeText(getApplicationContext(),voyage.getUser_id()+" = "+user_id,Toast.LENGTH_LONG).show();
                             if(user_id.equals(voyage.getUser_id())){
                                 list_voyages.add(voyage);
                                 voyageReclycleAdapter.notifyDataSetChanged();

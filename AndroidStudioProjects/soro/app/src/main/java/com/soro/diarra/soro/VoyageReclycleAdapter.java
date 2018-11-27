@@ -79,7 +79,7 @@ public class VoyageReclycleAdapter extends RecyclerView.Adapter<VoyageReclycleAd
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, LieuxActivity.class);
+                Intent intent = new Intent(context, MapsActivity.class);
                 intent.putExtra("voyage_id",voyageId);
                 context.startActivity(intent);
             }

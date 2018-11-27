@@ -2,10 +2,12 @@ package com.soro.diarra.soro;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.media.ExifInterface;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.media.ExifInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -37,6 +39,9 @@ import java.util.Map;
 import java.util.UUID;
 
 import id.zelory.compressor.Compressor;
+
+import static android.support.media.ExifInterface.*;
+import static android.support.media.ExifInterface.TAG_GPS_LATITUDE;
 
 public class NewLocationActivity extends AppCompatActivity {
 
@@ -76,11 +81,16 @@ public class NewLocationActivity extends AppCompatActivity {
         imgLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                /**
                 CropImage.activity()
                         .setGuidelines(CropImageView.Guidelines.ON)
-                        .setMinCropResultSize(100,100)
-                        .setMaxCropResultSize(2000,2000)
-                        .start(NewLocationActivity.this);
+                        .setMinCropResultSize(500,500)
+                        .setMaxCropResultSize(5000,5000)
+                        .start(NewLocationActivity.this);**/
+
+                Intent intent= new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent,1);
             }
         });
 
@@ -90,17 +100,9 @@ public class NewLocationActivity extends AppCompatActivity {
                 final String nomlieu = editNamneLocation.getText().toString();
                 if(!TextUtils.isEmpty(nomlieu)&& postImageUri != null){
                     newLieuBtn.setEnabled(false);
-                    String urlstring = postImageUri.getPath();
+                    //String urlstring = postImageUri.getPath();
 
-                    try {
-                        exifInterface = new ExifInterface(urlstring);
-                        exifInterface.getLatLong(position);
-                        Toast.makeText(getApplicationContext(),"post1 "+ position[0]+",post2 "+position[1],Toast.LENGTH_LONG).show();
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        
-                    }
 
                     //store file
                     final String randomName = UUID.randomUUID().toString();
@@ -118,8 +120,10 @@ public class NewLocationActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
+
+                    final Bitmap bitmap = ((BitmapDrawable) imgLocation.getDrawable()).getBitmap();
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    compressedImageFile.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                     byte[] imageData = baos.toByteArray();
 
                     final StorageReference postStorage = storageReference.child("lieux_voyages").child(randomName+".jpg");
@@ -145,8 +149,8 @@ public class NewLocationActivity extends AppCompatActivity {
                                 try {
 
                                     compressedImageFile = new Compressor(NewLocationActivity.this)
-                                            .setMaxHeight(100)
-                                            .setMaxWidth(100)
+                                            .setMaxHeight(200)
+                                            .setMaxWidth(200)
                                             .setQuality(1)
                                             .compressToBitmap(newThumbFile);
 
@@ -156,7 +160,7 @@ public class NewLocationActivity extends AppCompatActivity {
 
 
                                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                compressedImageFile.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                                 byte[] thumbData = baos.toByteArray();
 
                                 UploadTask uploadTask = storageReference.child("lieux_voyages/thumbs")
@@ -183,7 +187,9 @@ public class NewLocationActivity extends AppCompatActivity {
                                         postMap.put("image_url", downloadUri_post);
                                         postMap.put("image_thumb", downloadthumbUri);
                                         postMap.put("name", nomlieu);
-                                        //postMap.put("position",position);
+                                        postMap.put("latitude",position[0]);
+                                        postMap.put("longitude",position[1]);
+
 
                                         //todo get voyage
                                         firebaseFirestore.collection("Voyages/"+voyageId+"/lieux").add(postMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
@@ -226,12 +232,30 @@ public class NewLocationActivity extends AppCompatActivity {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
 
+                Uri postImageUrip = data.getData();
+
                 postImageUri = result.getUri();
                 imgLocation.setImageURI(postImageUri);
 
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+
+
+            }  else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
             }
+        }else if(requestCode==1){
+
+            postImageUri = data.getData();
+
+            imgLocation.setImageURI(postImageUri);
+            try {
+                exifInterface = new ExifInterface(getContentResolver().openInputStream(postImageUri));
+                exifInterface.getLatLong(position);
+                Toast.makeText(getApplicationContext(),"post1 "+ position[0]+",post2 "+position[1],Toast.LENGTH_LONG).show();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
 
     }
