@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.media.ExifInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -52,6 +53,7 @@ public class NewLocationActivity extends AppCompatActivity {
     private StorageReference storageReference;
     private FirebaseAuth mAuth;
     ExifInterface exifInterface;
+    private FloatingActionButton cameraBtn;
 
     String voyageId;
 
@@ -74,6 +76,8 @@ public class NewLocationActivity extends AppCompatActivity {
 
         Log.i("voyageidddddd",voyageId);
         imgLocation = (ImageView) findViewById(R.id.new_lieu_img);
+        cameraBtn = (FloatingActionButton)findViewById(R.id.camea_action);
+
         editNamneLocation = (EditText) findViewById(R.id.new_lieu_name);
         newLieuBtn = (Button) findViewById(R.id.new_lieu_btn);
 
@@ -91,6 +95,14 @@ public class NewLocationActivity extends AppCompatActivity {
 
                 Intent intent= new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intent,1);
+            }
+        });
+        //camera button
+        cameraBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent takephoto = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(takephoto,0);
             }
         });
 
@@ -184,9 +196,8 @@ public class NewLocationActivity extends AppCompatActivity {
 
                                         String downloadthumbUri = task.getResult().toString();
                                         Map<String, Object> postMap = new HashMap<>();
-                                        postMap.put("image_url", downloadUri_post);
-                                        postMap.put("image_thumb", downloadthumbUri);
                                         postMap.put("name", nomlieu);
+                                        postMap.put("image", downloadUri_post);
                                         postMap.put("latitude",position[0]);
                                         postMap.put("longitude",position[1]);
 
@@ -242,7 +253,7 @@ public class NewLocationActivity extends AppCompatActivity {
             }  else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
             }
-        }else if(requestCode==1){
+        }else if(requestCode==1||requestCode==0){
 
             postImageUri = data.getData();
 

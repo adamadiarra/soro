@@ -17,8 +17,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -26,7 +24,6 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -44,7 +41,6 @@ public class VoyageReclycleAdapter extends RecyclerView.Adapter<VoyageReclycleAd
     @NonNull
     @Override
     public VoyageReclycleAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        context = parent.getContext();
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_voyage, parent, false);
         context = parent.getContext();
         firebaseFirestore = FirebaseFirestore.getInstance();
@@ -69,7 +65,7 @@ public class VoyageReclycleAdapter extends RecyclerView.Adapter<VoyageReclycleAd
             public void onEvent(@Nullable QuerySnapshot documentSnapshots, @Nullable FirebaseFirestoreException e) {
                 if(!documentSnapshots.isEmpty()){
                     for (DocumentChange doc:documentSnapshots.getDocumentChanges()){
-                        String uri = doc.getDocument().getString("image_url");
+                        String uri = doc.getDocument().getString("image");
                         holder.setUriVoyage(uri);
                     }
                 }
@@ -79,7 +75,7 @@ public class VoyageReclycleAdapter extends RecyclerView.Adapter<VoyageReclycleAd
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, MapsActivity.class);
+                Intent intent = new Intent(context, LieuxActivity.class);
                 intent.putExtra("voyage_id",voyageId);
                 context.startActivity(intent);
             }
@@ -139,9 +135,9 @@ public class VoyageReclycleAdapter extends RecyclerView.Adapter<VoyageReclycleAd
             super(itemView);
             mView = itemView;
 
-            titreView = mView.findViewById(R.id.voyage_titre);
-            dateView = mView.findViewById(R.id.date_item);
-            voyageView = mView.findViewById(R.id.voyage_img_item);
+            titreView = mView.findViewById(R.id.lieu_nom);
+            dateView = mView.findViewById(R.id.date_item_lieu);
+            voyageView = mView.findViewById(R.id.lieu_img_item);
             imageButton = mView.findViewById(R.id.imageButton);
 
 

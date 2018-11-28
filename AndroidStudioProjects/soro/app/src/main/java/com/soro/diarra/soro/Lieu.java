@@ -3,21 +3,29 @@ package com.soro.diarra.soro;
 public class Lieu {
     private String nom;
     private String image;
-    private LongLat position;
+    private float latitude,longitude;
 
-    public Lieu(String nom, String image, LongLat position) {
+    public Lieu(String nom, String image, float latitude,float longitude) {
         this.nom = nom;
         this.image = image;
-        this.position = position;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
-    public Lieu(String nom, LongLat position) {
-        this.nom = nom;
-        this.position = position;
+    public float getLatitude() {
+        return latitude;
     }
 
-    public Lieu(String image) {
-        this.image = image;
+    public void setLatitude(float lat) {
+        this.latitude = lat;
+    }
+
+    public float getLonitude() {
+        return longitude;
+    }
+
+    public void setLonitude(float lng) {
+        this.longitude = lng;
     }
 
     public String getNom() {
@@ -36,13 +44,6 @@ public class Lieu {
         this.image = image;
     }
 
-    public LongLat getPosition() {
-        return position;
-    }
-
-    public void setPosition(LongLat position) {
-        this.position = position;
-    }
 
 
 }
