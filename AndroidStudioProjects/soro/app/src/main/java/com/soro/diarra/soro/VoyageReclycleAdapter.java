@@ -17,6 +17,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -93,7 +95,15 @@ public class VoyageReclycleAdapter extends RecyclerView.Adapter<VoyageReclycleAd
 
                         return true;
                     case R.id.v_supp_m:
-                        Toast.makeText(context,"supp voyage",Toast.LENGTH_LONG).show();
+                        firebaseFirestore.collection("Voyages").document(voyageId).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    voyages.remove(position);
+                                    notifyDataSetChanged();
+                                }
+                            }
+                        });
                         return true;
 
                         default:

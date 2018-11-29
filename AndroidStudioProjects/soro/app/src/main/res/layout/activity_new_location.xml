@@ -22,7 +22,7 @@
     <ImageView
         android:id="@+id/new_lieu_img"
         android:layout_width="0dp"
-        android:layout_height="212dp"
+        android:layout_height="211dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
@@ -66,11 +66,11 @@
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/camea_action"
-        android:layout_width="42dp"
+        android:layout_width="0dp"
         android:layout_height="54dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="@+id/new_lieu_img"
         app:layout_constraintEnd_toEndOf="parent"

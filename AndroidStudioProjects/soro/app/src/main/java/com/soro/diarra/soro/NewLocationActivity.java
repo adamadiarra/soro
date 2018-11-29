@@ -261,7 +261,6 @@ public class NewLocationActivity extends AppCompatActivity {
             try {
                 exifInterface = new ExifInterface(getContentResolver().openInputStream(postImageUri));
                 exifInterface.getLatLong(position);
-                Toast.makeText(getApplicationContext(),"post1 "+ position[0]+",post2 "+position[1],Toast.LENGTH_LONG).show();
 
             } catch (IOException e) {
                 e.printStackTrace();

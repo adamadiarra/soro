@@ -1,6 +1,7 @@
 package com.soro.diarra.soro;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -36,8 +37,8 @@ public class LieuRecycleAdapter extends RecyclerView.Adapter<LieuRecycleAdapter.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.setIsRecyclable(false);
-        String nom = lieux.get(position).getNom();
-        String uri = lieux.get(position).getImage();
+        final String nom = lieux.get(position).getNom();
+        final String uri = lieux.get(position).getImage();
         final float lat = lieux.get(position).getLatitude();
         final float lng = lieux.get(position).getLonitude();
 
@@ -45,7 +46,12 @@ public class LieuRecycleAdapter extends RecyclerView.Adapter<LieuRecycleAdapter.
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context,"position("+lat+","+lng+")",Toast.LENGTH_LONG).show();
+                Intent intent =  new Intent(context,MapsActivity.class);
+                intent.putExtra("lat",lat);
+                intent.putExtra("lng",lng);
+                intent.putExtra("nom",nom);
+                intent.putExtra("uri",uri);
+                context.startActivity(intent);
             }
         });
 
