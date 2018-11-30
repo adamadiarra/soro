@@ -3,46 +3,46 @@ package com.soro.diarra.soro;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.media.ExifInterface;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import id.zelory.compressor.Compressor;
-
-import static android.support.media.ExifInterface.*;
-import static android.support.media.ExifInterface.TAG_GPS_LATITUDE;
 
 public class NewLocationActivity extends AppCompatActivity {
 
@@ -101,8 +101,9 @@ public class NewLocationActivity extends AppCompatActivity {
         cameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent takephoto = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(takephoto,0);
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(takePictureIntent, 10);
+
             }
         });
 
@@ -235,37 +236,49 @@ public class NewLocationActivity extends AppCompatActivity {
     }
 
 
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private File createImageFile() throws IOException {
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir =
+                getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        postImageUri = Uri.parse(image.getPath());
+        return image;
+    }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            if (resultCode == RESULT_OK) {
+        if(resultCode == RESULT_OK) {
+            if (requestCode == 1) {
 
-                Uri postImageUrip = data.getData();
+                postImageUri = data.getData();
+                Glide.with(this).load(postImageUri).into(imgLocation);
+                //imgLocation.setImageURI(postImageUri);
+                try {
+                  exifInterface = new ExifInterface(getContentResolver().openInputStream(postImageUri));
+                  exifInterface.getLatLong(position);
 
-                postImageUri = result.getUri();
-                imgLocation.setImageURI(postImageUri);
+                } catch (IOException e) {
+                  e.printStackTrace();
+                }
 
+            }else if(requestCode ==10){
+                Bundle extras = data.getExtras();
+                Bitmap imageBitmap = (Bitmap) extras.get("data");
 
-
-            }  else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Exception error = result.getError();
+                Glide.with(this).load(imageBitmap).into(imgLocation);
             }
-        }else if(requestCode==1||requestCode==0){
-
-            postImageUri = data.getData();
-
-            imgLocation.setImageURI(postImageUri);
-            try {
-                exifInterface = new ExifInterface(getContentResolver().openInputStream(postImageUri));
-                exifInterface.getLatLong(position);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
         }
 
     }

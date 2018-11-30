@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -18,17 +19,27 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nullable;
+
+import static android.support.constraint.Constraints.TAG;
 
 public class VoyageReclycleAdapter extends RecyclerView.Adapter<VoyageReclycleAdapter.ViewHolder> {
 
@@ -55,6 +66,7 @@ public class VoyageReclycleAdapter extends RecyclerView.Adapter<VoyageReclycleAd
         String titre = voyages.get(position).getTitre();
         String date = voyages.get(position).getDate();
         final String voyageId = voyages.get(position).VoyageId;
+
 
 
         //todo date formate
@@ -95,15 +107,58 @@ public class VoyageReclycleAdapter extends RecyclerView.Adapter<VoyageReclycleAd
 
                         return true;
                     case R.id.v_supp_m:
-                        firebaseFirestore.collection("Voyages").document(voyageId).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        Query firstQuery1 = firebaseFirestore.collection("Voyages/"+voyageId+"/lieux");
+                        firstQuery1.addSnapshotListener(new EventListener<QuerySnapshot>() {
                             @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    voyages.remove(position);
-                                    notifyDataSetChanged();
+                            public void onEvent(@Nullable QuerySnapshot documentSnapshots, @Nullable FirebaseFirestoreException e) {
+                                if(!documentSnapshots.isEmpty()){
+                                    for (DocumentChange doc:documentSnapshots.getDocumentChanges()){
+                                        String uri = doc.getDocument().getString("image");
+                                        String lieuId = doc.getDocument().getId();
+                                        StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(uri);
+                                        storageReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                // File deleted successfully
+                                                firebaseFirestore.collection("Voyages/"+voyageId+"/lieux").document(lieuId)
+                                                        .delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+
+                                                    }
+                                                }).addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+
+                                                    }
+                                                });
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception exception) {
+                                                // Uh-oh, an error occurred!
+                                            }
+                                        });
+
+                                    }
                                 }
+                                firebaseFirestore.collection("Voyages").document(voyageId).delete()
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if(task.isSuccessful()){
+                                                    voyages.remove(position);
+                                                    notifyDataSetChanged();
+                                                }
+                                            }
+                                        });
                             }
                         });
+
+
+
+
+
                         return true;
 
                         default:
