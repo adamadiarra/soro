@@ -2,6 +2,7 @@ package com.soro.diarra.soro;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SearchRecentSuggestionsProvider;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,10 +20,12 @@ import java.util.List;
 public class LieuRecycleAdapter extends RecyclerView.Adapter<LieuRecycleAdapter.ViewHolder>  {
     public Context context;
     public List<Lieu> lieux;
+    public String voyageId;
     FirebaseFirestore firebaseFirestore;
 
-    public LieuRecycleAdapter(List<Lieu> lieux){
+    public LieuRecycleAdapter(List<Lieu> lieux,String voyageId){
         this.lieux = lieux;
+        this.voyageId=voyageId;
     }
     @NonNull
     @Override
@@ -51,6 +54,7 @@ public class LieuRecycleAdapter extends RecyclerView.Adapter<LieuRecycleAdapter.
                 intent.putExtra("lng",lng);
                 intent.putExtra("nom",nom);
                 intent.putExtra("uri",uri);
+                intent.putExtra("voyage_id",voyageId);
                 context.startActivity(intent);
             }
         });

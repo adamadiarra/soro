@@ -19,6 +19,8 @@
     <string name="setup_hint_name">Your name</string>
     <string name="menu_add_lieu">Ajouter un lieu</string>
     <string name="v_mnu_supp">supprimer</string>
+    <string name="view_map">map</string>
     <string name="title_activity_maps">Map</string>
+    <string name="todo_lieu">lieu</string>
 
 </resources>

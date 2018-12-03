@@ -42,17 +42,19 @@ public class LieuxActivity extends AppCompatActivity {
         toolbar = (Toolbar)findViewById(R.id.lieutoolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Lieux de voyages");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         String voyageId = getIntent().getStringExtra("voyage_id");
 
         firebaseFirestore = FirebaseFirestore.getInstance();
         lieux = new ArrayList<>();
         listView = (RecyclerView)findViewById(R.id.list_lieux);
-        lieuRecycleAdapter = new LieuRecycleAdapter(lieux);
+        lieuRecycleAdapter = new LieuRecycleAdapter(lieux,voyageId);
 
         listView.setLayoutManager(new LinearLayoutManager(this));
         listView.setAdapter(lieuRecycleAdapter);
-        Toast.makeText(getApplicationContext(),voyageId,Toast.LENGTH_LONG).show();
+
         firebaseFirestore.collection("Voyages/"+voyageId+"/lieux")
                 .orderBy("name",Query.Direction.DESCENDING).addSnapshotListener(LieuxActivity.this, new EventListener<QuerySnapshot>() {
             @Override

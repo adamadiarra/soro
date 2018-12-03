@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,7 +14,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -24,7 +22,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
@@ -32,14 +29,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Nullable;
-
-import static android.support.constraint.Constraints.TAG;
 
 public class VoyageReclycleAdapter extends RecyclerView.Adapter<VoyageReclycleAdapter.ViewHolder> {
 
@@ -106,6 +98,14 @@ public class VoyageReclycleAdapter extends RecyclerView.Adapter<VoyageReclycleAd
                         context.startActivity(intent);
 
                         return true;
+
+                    case R.id.view_map:
+
+                       Intent intentMapVoyage=new Intent(context,VoyageMapActivity.class);
+                       intentMapVoyage.putExtra("voyage_id",voyageId);
+                       context.startActivity(intentMapVoyage);
+
+                       return true;
                     case R.id.v_supp_m:
                         Query firstQuery1 = firebaseFirestore.collection("Voyages/"+voyageId+"/lieux");
                         firstQuery1.addSnapshotListener(new EventListener<QuerySnapshot>() {

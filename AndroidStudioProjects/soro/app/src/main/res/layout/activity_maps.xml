@@ -3,16 +3,44 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:mapbox="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/tool_map_l"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        mapbox:layout_constraintEnd_toEndOf="parent"
+        mapbox:layout_constraintStart_toStartOf="parent"
+        mapbox:layout_constraintTop_toTopOf="parent"></android.support.v7.widget.Toolbar>
+
+
     <com.mapbox.mapboxsdk.maps.MapView
         android:id="@+id/mapView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        mapbox:layout_constraintBottom_toBottomOf="parent"
+        mapbox:layout_constraintEnd_toEndOf="parent"
+        mapbox:layout_constraintStart_toStartOf="parent"
+        mapbox:layout_constraintTop_toBottomOf="@+id/tool_map_l"
         mapbox:mapbox_cameraTargetLat="40.73581"
         mapbox:mapbox_cameraTargetLng="-73.99155"
-        mapbox:mapbox_styleUrl="mapbox://styles/mapbox/streets-v10"
-        mapbox:mapbox_cameraZoom="11" />
+        mapbox:mapbox_cameraZoom="11"
+        mapbox:mapbox_styleUrl="mapbox://styles/mapbox/streets-v10" />
+
+    <ImageView
+        android:id="@+id/map_lieu_img"
+        android:layout_width="124dp"
+        android:layout_height="173dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        mapbox:layout_constraintBottom_toBottomOf="parent"
+        mapbox:layout_constraintEnd_toEndOf="parent"
+        mapbox:srcCompat="@mipmap/add_image" />
 
 </android.support.constraint.ConstraintLayout>

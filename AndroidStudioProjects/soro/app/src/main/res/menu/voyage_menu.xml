@@ -5,6 +5,9 @@
         android:id="@+id/v_add_lieu_m"
         android:title="@string/menu_add_lieu" />
     <item
+        android:id="@+id/view_map"
+        android:title="@string/view_map" />
+    <item
         android:id="@+id/v_supp_m"
         android:title="@string/v_mnu_supp" />
 </menu>
