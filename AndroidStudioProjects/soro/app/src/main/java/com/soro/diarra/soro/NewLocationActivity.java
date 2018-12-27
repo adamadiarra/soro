@@ -1,8 +1,10 @@
 package com.soro.diarra.soro;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.icu.text.DateFormat;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Build;
@@ -22,6 +24,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.Continuation;
@@ -37,8 +41,10 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -48,6 +54,7 @@ public class NewLocationActivity extends AppCompatActivity {
 
     private ImageView imgLocation;
     private EditText editNamneLocation;
+    private ProgressBar progressBar;
     private Button newLieuBtn;
     private FirebaseFirestore firebaseFirestore;
     private StorageReference storageReference;
@@ -61,6 +68,7 @@ public class NewLocationActivity extends AppCompatActivity {
     private Uri postImageUri = null;
     private String user_id = null;
     float[] position = new float[2];
+    String dateImage = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +85,7 @@ public class NewLocationActivity extends AppCompatActivity {
         Log.i("voyageidddddd",voyageId);
         imgLocation = (ImageView) findViewById(R.id.new_lieu_img);
         cameraBtn = (FloatingActionButton)findViewById(R.id.camea_action);
+        progressBar = (ProgressBar)findViewById(R.id.new_loc_progress);
 
         editNamneLocation = (EditText) findViewById(R.id.new_lieu_name);
         newLieuBtn = (Button) findViewById(R.id.new_lieu_btn);
@@ -111,8 +120,11 @@ public class NewLocationActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 final String nomlieu = editNamneLocation.getText().toString();
-                if(!TextUtils.isEmpty(nomlieu)&& postImageUri != null){
+                if(!TextUtils.isEmpty(nomlieu)&& postImageUri != null&&dateImage!=null){
                     newLieuBtn.setEnabled(false);
+                    editNamneLocation.setEnabled(false);
+                    imgLocation.setEnabled(false);
+                    progressBar.setVisibility(View.VISIBLE);
                     //String urlstring = postImageUri.getPath();
 
 
@@ -201,6 +213,7 @@ public class NewLocationActivity extends AppCompatActivity {
                                         postMap.put("image", downloadUri_post);
                                         postMap.put("latitude",position[0]);
                                         postMap.put("longitude",position[1]);
+                                        postMap.put("date_time",dateImage);
 
 
                                         //todo get voyage
@@ -208,12 +221,14 @@ public class NewLocationActivity extends AppCompatActivity {
                                             @Override
                                             public void onComplete(@NonNull Task<DocumentReference> task) {
                                                 if(task.isSuccessful()){
+
                                                     Intent mainIntent = new Intent(NewLocationActivity.this, MainActivity.class);
                                                     startActivity(mainIntent);
                                                     finish();
                                                 }else {
 
                                                 }
+                                                progressBar.setVisibility(View.INVISIBLE);
                                             }
                                         });
 
@@ -223,6 +238,7 @@ public class NewLocationActivity extends AppCompatActivity {
                             }else {
 
                             }
+
                         }
                     });
 
@@ -255,6 +271,8 @@ public class NewLocationActivity extends AppCompatActivity {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @SuppressLint("RestrictedApi")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -266,8 +284,15 @@ public class NewLocationActivity extends AppCompatActivity {
                 Glide.with(this).load(postImageUri).into(imgLocation);
                 //imgLocation.setImageURI(postImageUri);
                 try {
-                  exifInterface = new ExifInterface(getContentResolver().openInputStream(postImageUri));
-                  exifInterface.getLatLong(position);
+                    exifInterface = new ExifInterface(getContentResolver().openInputStream(postImageUri));
+                    exifInterface.getLatLong(position);
+                    long dateTime=exifInterface.getDateTime();
+                    Calendar cal1 = Calendar.getInstance();
+                    cal1.setTimeInMillis(dateTime);
+                    SimpleDateFormat df1 = new SimpleDateFormat("dd/MM/yyyy HH:mm",Locale.FRANCE);
+                    dateImage = df1.format(cal1.getTime());
+
+
 
                 } catch (IOException e) {
                   e.printStackTrace();

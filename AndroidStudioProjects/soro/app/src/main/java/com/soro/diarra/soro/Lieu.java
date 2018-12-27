@@ -5,11 +5,33 @@ public class Lieu {
     private String image;
     private float latitude,longitude;
 
-    public Lieu(String nom, String image, float latitude,float longitude) {
+
+    private String id;
+    private String voyageId;
+    private String date_time;
+
+    public Lieu(String nom, String image, float latitude,float longitude,String date_time) {
         this.nom = nom;
         this.image = image;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.date_time=date_time;
+    }
+
+    public String getVoyageId() {
+        return voyageId;
+    }
+
+    public void setVoyageId(String voyageId) {
+        this.voyageId = voyageId;
+    }
+
+    public String getDate_time() {
+        return date_time;
+    }
+
+    public void setDate_time(String date_time) {
+        this.date_time = date_time;
     }
 
     public float getLatitude() {
@@ -42,6 +64,13 @@ public class Lieu {
 
     public void setImage(String image) {
         this.image = image;
+    }
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
 

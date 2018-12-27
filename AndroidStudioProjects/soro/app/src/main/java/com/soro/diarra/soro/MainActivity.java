@@ -1,8 +1,15 @@
 package com.soro.diarra.soro;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +19,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -19,6 +27,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -39,70 +48,83 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     FirebaseFirestore firebaseFirestore;
 
+    //fragments
+    private VoyageFragment voyageFragment;
+    private GalleryFragment galleryFragment;
 
-    private RecyclerView listeView;
-    private List<Voyage> list_voyages;
-    private VoyageReclycleAdapter voyageReclycleAdapter;
-    private FloatingActionButton addNewVoyagesbtn;
+    private BottomNavigationView mainBottomNav;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         toolbar = (Toolbar)findViewById(R.id.main_tollbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Mes voyages");
 
         mAuth = FirebaseAuth.getInstance();
-
         firebaseFirestore = FirebaseFirestore.getInstance();
 
-        list_voyages = new ArrayList<>();
-        voyageReclycleAdapter = new VoyageReclycleAdapter(list_voyages);
+        mainBottomNav= (BottomNavigationView)findViewById(R.id.main_btm_nav);
 
-        listeView = (RecyclerView)findViewById(R.id.list_voyage_view);
-
-        listeView.setLayoutManager(new LinearLayoutManager(this));
-        listeView.setAdapter(voyageReclycleAdapter);
-
-        // add new voyage
-        addNewVoyagesbtn = (FloatingActionButton)findViewById(R.id.add_new_voyage);
-        addNewVoyagesbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this,NewVoyageActivity.class);
-                startActivity(intent);
-            }
-        });
+        //fragments
+        if(mAuth.getCurrentUser() != null) {
+            voyageFragment = new VoyageFragment();
+            galleryFragment = new GalleryFragment();
 
 
+            initializeFragment();
 
-        Query firstQuery = firebaseFirestore.collection("Voyages").orderBy("titre",Query.Direction.DESCENDING);
-
-        firstQuery.addSnapshotListener(this, new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot documentSnapshots, @Nullable FirebaseFirestoreException e) {
-
-                if (!documentSnapshots.isEmpty()) {
-                    for (DocumentChange doc:documentSnapshots.getDocumentChanges()){
-                        if (doc.getType() == DocumentChange.Type.ADDED){
-
-                            user_id = mAuth.getCurrentUser().getUid();
-                            String voyageId = doc.getDocument().getId();
-                            Voyage voyage = doc.getDocument().toObject(Voyage.class).withId(voyageId);
-                            //Toast.makeText(getApplicationContext(),voyage.getUser_id()+" = "+user_id,Toast.LENGTH_LONG).show();
-                            if(user_id.equals(voyage.getUser_id())){
-                                list_voyages.add(voyage);
-                                voyageReclycleAdapter.notifyDataSetChanged();
-                            }
-
-
-
-                        }
+            mainBottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                    switch (menuItem.getItemId()) {
+                        case R.id.voyage_nav:
+                            replaceFragment(voyageFragment);
+                            return true;
+                        case R.id.gallery_nav:
+                            replaceFragment(galleryFragment);
+                            return true;
+                        default:
+                            return false;
                     }
                 }
-            }
-        });
+            });
+
+        }
+
+
+    }
+
+    private void replaceFragment(Fragment fragment) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.main_container,fragment);
+        if(fragment == voyageFragment){
+            fragmentTransaction.hide(galleryFragment);
+        }
+
+        if(fragment == galleryFragment){
+
+            fragmentTransaction.hide(voyageFragment);
+        }
+
+        fragmentTransaction.show(fragment);
+
+        //fragmentTransaction.replace(R.id.main_container, fragment);
+        fragmentTransaction.commit();
+    }
+
+
+    private void initializeFragment(){
+
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+
+        fragmentTransaction.add(R.id.main_container, voyageFragment);
+        fragmentTransaction.add(R.id.main_container, galleryFragment);
+        fragmentTransaction.hide(galleryFragment);
+
+        fragmentTransaction.commit();
     }
 
 
@@ -114,8 +136,8 @@ public class MainActivity extends AppCompatActivity {
             sendToLogin();
         }else {
 
-            //user_id = mAuth.getUid();
-            /**
+            user_id = mAuth.getUid();
+
             firebaseFirestore.collection("Users").document(user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -133,9 +155,8 @@ public class MainActivity extends AppCompatActivity {
 
                         Toast.makeText(MainActivity.this,"Error: "+task.getException().getMessage(),Toast.LENGTH_LONG).show();
                     }
-
                 }
-            });*/
+            });
         }
     }
 
@@ -163,8 +184,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void logOut() {
-        mAuth.signOut();
-        sendToLogin();
+        Intent intent = new Intent(MainActivity.this,LogoutActivity.class);
+        startActivity(intent);
+        finish();
     }
 
 
@@ -173,4 +195,6 @@ public class MainActivity extends AppCompatActivity {
         startActivity(i);
         finish();
     }
+
+
 }

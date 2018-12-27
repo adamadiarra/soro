@@ -16,5 +16,20 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="MynavBottomStyle" >
+        <item name="android:textSize">24sp</item>
+        <item name="android:background">@color/tranparent</item>
+
+    </style>
+
+    <style name="NavigationMapRoute">
+        <!-- Colors -->
+        <item name="routeColor">@color/mapboxBlue</item>
+        <item name="routeModerateCongestionColor">@color/mapboxYellow</item>
+        <item name="routeSevereCongestionColor">@color/mapboxPink</item>
+        <item name="routeShieldColor">@color/mapboxWhite</item>
+        <!-- Scales -->
+        <item name="routeScale">1.0</item>
+    </style>
 
 </resources>

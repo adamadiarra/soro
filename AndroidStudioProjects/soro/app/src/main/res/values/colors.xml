@@ -2,10 +2,19 @@
 <resources>
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#d81b60</color>
+    <color name="colorAccent">#d81b2e</color>
 
     <color name="redcolor">#ff1a0a</color>
-    <color name="like_btn_gray">#747474</color>
+    <color name="like_btn_gray">#d2a39f9f</color>
     <color name="like_btn_accent">#F44336</color>
     <color name="white_color">#FFFFFF</color>
+    <color name="tranparent">#a8b7b5b5</color>
+
+    <color name="mapboxWhite">#ffffff</color>
+    <color name="mapboxBlue">#4264fb</color>
+    <color name="mapboxGrayLight">#c6d2e1</color>
+
+    <color name="mapboxPink">#ee4e8b</color>
+    <color name="mapboxYellow">#d9d838</color>
+    <color name="mapboxRed">#b43b71</color>
 </resources>

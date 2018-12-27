@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
@@ -56,6 +57,7 @@
             tools:targetApi="jelly_bean" />
         <activity
             android:name=".LieuxActivity"
+            android:launchMode="singleTop"
             android:parentActivityName=".MainActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".SetupActivity" />
@@ -83,7 +85,9 @@
         <activity
             android:name=".VoyageMapActivity"
             android:parentActivityName=".MainActivity" />
-        <activity android:name=".FullScreenActivity"></activity>
+        <activity android:name=".FullScreenActivity" />
+        <activity android:name=".LogoutActivity" />
+        <activity android:name=".EditLieuActivity"></activity>
     </application>
 
 </manifest>

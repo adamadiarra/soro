@@ -68,8 +68,7 @@ public class NewVoyageActivity extends AppCompatActivity {
         // les pays
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_dropdown_item_1line, paysData);
-                textView = (AutoCompleteTextView)
-                findViewById(R.id.countries_list);
+                textView = (AutoCompleteTextView) findViewById(R.id.countries_list);
         textView.setAdapter(adapter);
 
 

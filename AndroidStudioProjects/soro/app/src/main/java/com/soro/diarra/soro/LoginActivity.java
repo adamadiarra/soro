@@ -58,6 +58,9 @@ public class LoginActivity extends AppCompatActivity  {
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
 
         mPasswordView = (EditText) findViewById(R.id.password);
+
+        mEmailView.setText("a@a.com");
+        mPasswordView.setText("adamaa");
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -108,6 +111,7 @@ public class LoginActivity extends AppCompatActivity  {
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
+
 
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
@@ -214,13 +218,6 @@ public class LoginActivity extends AppCompatActivity  {
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    @Override
-    protected void onStart() {
-        super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser!=null){
-            gotoMain();
-        }
-    }
+
 }
 

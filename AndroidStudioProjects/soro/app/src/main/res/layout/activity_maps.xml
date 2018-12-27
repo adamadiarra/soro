@@ -15,7 +15,9 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         mapbox:layout_constraintEnd_toEndOf="parent"
         mapbox:layout_constraintStart_toStartOf="parent"
-        mapbox:layout_constraintTop_toTopOf="parent"></android.support.v7.widget.Toolbar>
+        mapbox:layout_constraintTop_toTopOf="parent">
+
+    </android.support.v7.widget.Toolbar>
 
 
     <com.mapbox.mapboxsdk.maps.MapView

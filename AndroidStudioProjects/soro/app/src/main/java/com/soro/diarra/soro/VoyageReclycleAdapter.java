@@ -2,6 +2,7 @@ package com.soro.diarra.soro;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -10,10 +11,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -29,6 +33,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -38,6 +43,7 @@ public class VoyageReclycleAdapter extends RecyclerView.Adapter<VoyageReclycleAd
     public Context context;
     public List<Voyage> voyages;
     private FirebaseFirestore firebaseFirestore;
+
 
     public VoyageReclycleAdapter(List<Voyage> voyages) {
         this.voyages = voyages;
@@ -60,19 +66,20 @@ public class VoyageReclycleAdapter extends RecyclerView.Adapter<VoyageReclycleAd
         final String voyageId = voyages.get(position).VoyageId;
 
 
-
-        //todo date formate
-
-
-
-        Query firstQuery = firebaseFirestore.collection("Voyages/"+voyageId+"/lieux").limit(1);
+        Query firstQuery = firebaseFirestore.collection("Voyages/"+voyageId+"/lieux");
         firstQuery.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot documentSnapshots, @Nullable FirebaseFirestoreException e) {
-                if(!documentSnapshots.isEmpty()){
-                    for (DocumentChange doc:documentSnapshots.getDocumentChanges()){
-                        String uri = doc.getDocument().getString("image");
-                        holder.setUriVoyage(uri);
+                if(documentSnapshots!=null) {
+                    if (!documentSnapshots.isEmpty()) {
+                        List<String> uris = new ArrayList<>();
+                        for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
+                            String uri = doc.getDocument().getString("image");
+                            uris.add(uri);
+                        }
+                        holder.runChangeImage(uris);
+                    } else {
+                       
                     }
                 }
             }
@@ -83,6 +90,7 @@ public class VoyageReclycleAdapter extends RecyclerView.Adapter<VoyageReclycleAd
             public void onClick(View v) {
                 Intent intent = new Intent(context, LieuxActivity.class);
                 intent.putExtra("voyage_id",voyageId);
+                intent.putExtra("titre",titre);
                 context.startActivity(intent);
             }
         });
@@ -193,8 +201,10 @@ public class VoyageReclycleAdapter extends RecyclerView.Adapter<VoyageReclycleAd
         private TextView dateView;
         private ImageView voyageView;
         private View mView;
-        private Toolbar vtoolbar;
         private ImageButton imageButton;
+        private ImageButton next_im;
+        private ImageButton back_im;
+        private ChangeImage changeImage;
         PopupMenu.OnMenuItemClickListener mylistener;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -205,6 +215,8 @@ public class VoyageReclycleAdapter extends RecyclerView.Adapter<VoyageReclycleAd
             voyageView = mView.findViewById(R.id.lieu_img_item);
             imageButton = mView.findViewById(R.id.imageButton);
 
+            back_im = mView.findViewById(R.id.v_imgleft_btn);
+            next_im = mView.findViewById(R.id.v_imright_btn);
 
 
         }
@@ -215,8 +227,72 @@ public class VoyageReclycleAdapter extends RecyclerView.Adapter<VoyageReclycleAd
 
         }
 
-        public void setUriVoyage(String uriVoyage){
-            Glide.with(context).load(uriVoyage).into(voyageView);
+        public void runChangeImage(List<String> uris){
+
+            final Animation anim_out = AnimationUtils.loadAnimation(context, android.R.anim.slide_out_right);
+            final Animation anim_in  = AnimationUtils.loadAnimation(context, android.R.anim.slide_in_left);
+
+
+            Handler handler = new Handler();
+            Runnable runnable = new Runnable() {
+                int i = 0;
+                @Override
+            public void run() {
+
+                    back_im.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                        }
+                    });
+
+                    next_im.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                        }
+                    });
+
+                    anim_out.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+
+                            Glide.with(context).load(uris.get(i)).into(voyageView);
+                            anim_in.setAnimationListener(new Animation.AnimationListener() {
+                                @Override public void onAnimationStart(Animation animation) {}
+                                @Override public void onAnimationRepeat(Animation animation) {}
+                                @Override public void onAnimationEnd(Animation animation) {}
+                            });
+                            voyageView.startAnimation(anim_in);
+
+
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+
+                        }
+                    });
+                    voyageView.startAnimation(anim_out);
+
+                    i++;
+                    if (i > uris.size() - 1) {
+                        i = 0;
+                    }
+                    if (i < 0) {
+                        i = uris.size() - 1;
+                    }
+                    handler.postDelayed(this, 5000);
+                }
+
+
+            };
+            handler.postDelayed(runnable, 5000);
         }
 
         public void showVoyageMenu(){

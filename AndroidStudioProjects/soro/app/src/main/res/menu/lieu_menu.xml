@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <item
+        android:id="@+id/supp_lieu"
+        android:title="supprimer" />
+    <item
+        android:id="@+id/edit_lieu"
+        android:title="Modifier" />
 </menu>
