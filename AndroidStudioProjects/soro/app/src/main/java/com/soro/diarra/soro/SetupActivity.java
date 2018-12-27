@@ -83,7 +83,7 @@ public class SetupActivity extends AppCompatActivity {
         firebaseFirestore = FirebaseFirestore.getInstance();
         UserNameView = (EditText) findViewById(R.id.user_name_view);
         UserBirthView = (EditText) findViewById(R.id.user_birth_day_view);
-        countryView = (AutoCompleteTextView) findViewById(R.id.user_country_view);
+
         editBtn = (FloatingActionButton) findViewById(R.id.edit_setting_btn);
         saveBtn = (Button) findViewById(R.id.save_btn);
         setupViewer =  findViewById(R.id.contain_viewer);
@@ -92,7 +92,7 @@ public class SetupActivity extends AppCompatActivity {
         // les pays
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_dropdown_item_1line, paysData);
-        countryView = (AutoCompleteTextView) findViewById(R.id.countries_list);
+        countryView = (AutoCompleteTextView) findViewById(R.id.user_country_view);
         countryView.setAdapter(adapter);
 
         UserBirthView.setFocusable(false);
