@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_add_friend"
+        android:icon="@drawable/ic_add_user"
+        android:title="Ajouter" />
+    <item
+        android:id="@+id/nav_send_msg"
+        android:icon="@drawable/ic_message_user"
+        android:title="Message" />
+    <item
+        android:id="@+id/nav_plus_option"
+        android:icon="@drawable/ic_plus_user"
+        android:title="Plus" />
+</menu>

@@ -33,16 +33,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <provider
-            android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.soro.diarra.soro.provider"
-            android:enabled="true"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-        </provider>
+
 
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -51,6 +42,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".NewVoyageActivity"
             android:parentActivityName=".MainActivity"
@@ -59,6 +51,7 @@
             android:name=".LieuxActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".MainActivity" />
+
         <activity android:name=".LoginActivity" />
         <activity android:name=".SetupActivity" />
         <activity android:name=".RegistryActivity" />
@@ -87,7 +80,7 @@
             android:parentActivityName=".MainActivity" />
         <activity android:name=".FullScreenActivity" />
         <activity android:name=".LogoutActivity" />
-        <activity android:name=".EditLieuActivity"></activity>
+        <activity android:name=".EditLieuActivity"/>
     </application>
 
 </manifest>

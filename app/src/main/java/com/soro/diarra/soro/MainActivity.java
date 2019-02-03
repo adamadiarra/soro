@@ -8,6 +8,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -33,6 +34,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,10 +49,12 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private Toolbar toolbar;
     FirebaseFirestore firebaseFirestore;
+    MaterialSearchView searchView;
 
     //fragments
     private VoyageFragment voyageFragment;
     private GalleryFragment galleryFragment;
+    private SearchFragment searchFragment;
 
     private BottomNavigationView mainBottomNav;
     @Override
@@ -66,12 +70,14 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
 
+
         mainBottomNav= (BottomNavigationView)findViewById(R.id.main_btm_nav);
 
         //fragments
         if(mAuth.getCurrentUser() != null) {
             voyageFragment = new VoyageFragment();
             galleryFragment = new GalleryFragment();
+            searchFragment = new SearchFragment();
 
 
             initializeFragment();
@@ -86,6 +92,9 @@ public class MainActivity extends AppCompatActivity {
                         case R.id.gallery_nav:
                             replaceFragment(galleryFragment);
                             return true;
+                        case R.id.action_search_nav:
+                            replaceFragment(searchFragment);
+                            return true;
                         default:
                             return false;
                     }
@@ -95,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+
     }
 
     private void replaceFragment(Fragment fragment) {
@@ -102,11 +112,18 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.main_container,fragment);
         if(fragment == voyageFragment){
             fragmentTransaction.hide(galleryFragment);
+            fragmentTransaction.hide(searchFragment);
         }
 
         if(fragment == galleryFragment){
 
             fragmentTransaction.hide(voyageFragment);
+            fragmentTransaction.hide(searchFragment);
+        }
+        if(fragment == searchFragment){
+
+            fragmentTransaction.hide(voyageFragment);
+            fragmentTransaction.hide(galleryFragment);
         }
 
         fragmentTransaction.show(fragment);
@@ -122,6 +139,8 @@ public class MainActivity extends AppCompatActivity {
 
         fragmentTransaction.add(R.id.main_container, voyageFragment);
         fragmentTransaction.add(R.id.main_container, galleryFragment);
+        fragmentTransaction.add(R.id.main_container, searchFragment);
+        fragmentTransaction.hide(searchFragment);
         fragmentTransaction.hide(galleryFragment);
 
         fragmentTransaction.commit();
@@ -164,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu,menu);
+
         return true;
     }
 

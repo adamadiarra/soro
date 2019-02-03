@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,7 +16,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -204,7 +202,6 @@ public class VoyageReclycleAdapter extends RecyclerView.Adapter<VoyageReclycleAd
         private ImageButton imageButton;
         private ImageButton next_im;
         private ImageButton back_im;
-        private ChangeImage changeImage;
         PopupMenu.OnMenuItemClickListener mylistener;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
