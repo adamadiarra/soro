@@ -59,8 +59,7 @@ public class LoginActivity extends AppCompatActivity  {
 
         mPasswordView = (EditText) findViewById(R.id.password);
 
-        mEmailView.setText("a@a.com");
-        mPasswordView.setText("adamaa");
+        
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {

@@ -26,8 +26,9 @@
             android:id="@+id/annul_logout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:layout_weight="1"
-            android:background="@color/colorAccent"
+            android:background="@drawable/roundform_accent"
             android:padding="15dp"
             android:text="Annuler" />
 
@@ -35,6 +36,7 @@
             android:id="@+id/logout_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:layout_weight="1"
             android:background="@drawable/roundform"
             android:padding="15dp"
